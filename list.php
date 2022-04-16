@@ -29,13 +29,11 @@ $link = mysqli_connect('localhost:3306' , 'root' , '');
 
 <html dir = "rtl">
 <head>
-    <style>
-        table , th , td {
-            border: 1px black;
-        }
+    <title>لیست کاربران</title>
     </style>
 </head>
 <body>
+    <h3>لیست کاربران</h3>
     <table >
         <thead>
 
