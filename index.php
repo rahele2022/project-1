@@ -1,98 +1,112 @@
 <?php
 
-//function request($field){
-//
-//    return isset($_REQUEST['field']) && $_REQUEST['field'] != "" ? $_REQUEST['field'] : null;
-//}
+$link = mysqli_connect('localhost:3306' , 'root' , '');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (! $link){
 
-    $name = isset($_POST['name']) ? $_POST['name'] : null;
-    $family = isset($_POST['family']) ? $_POST['family'] : null;
-    $email = isset($_POST['email']) ? $_POST['email'] : null ;
-    $age = isset($_POST['age']) ? $_POST['age'] :null ;
-
-//    $name = request('name');
-//    $family = request('family');
-//    $email = request('email');
-//    $age = request('age');
-
-
-    if (! is_null($name) && ! is_null($family) && ! is_null($email) && ! is_null($age)) {
-
-        $link = mysqli_connect('localhost:3306', 'root', '');
-        if (!$link) {
-
-            echo 'could not connect :' . mysqli_connect_error();
-            exit;
-        }
-
-
-//$SQL ='CREATE DATABASE customers';
-//
-//if ($result = mysqli_query($link , $SQL)){
-//
-//    echo 'database query run successfully';
-//}else{
-//
-//    echo 'error : ' . mysqli_error($link);
-//}
-
-
-        mysqli_select_db($link, 'customers');
-
-
-//$SQL ='create table users(id INT AUTO_INCREMENT , name VARCHAR(100) NOT NULL , family VARCHAR(100) NOT NULL ,email varchar(100) NOT NULL , age varchar(100) NOT NULL ,primary key (id))';
-//
-//if ($result1= mysqli_query($link , $SQL)){
-//
-//    echo 'table query run successfully';
-//}else{
-//    echo 'error : ' . mysqli_error($link);
-//}
-
-        $statement = mysqli_prepare($link , "insert into users( name , family , email , age ) values (? ,? , ? , ?)");
-
-        mysqli_stmt_bind_param($statement , 'sssi' , $name , $family ,$email , $age);
-
-        if ($result = mysqli_stmt_execute($statement)) {
-
-//            echo 'insert query run successfully';
-        } else {
-            echo 'error : ' . mysqli_error($link);
-        }
-
-
-    }
+    echo 'could not connect : ' . mysqli_connect_error();
+    exit;
 }
+    mysqli_select_db($link , 'customers');
 
+    $SQL = " select * from users ORDER BY id";
 
+    if ($result = mysqli_query($link , $SQL)){
 
+//       while ( $user = mysqli_fetch_assoc($result)) {
+//
+//           var_dump($user);
+//       }
 
+    }else{
 
-
+        echo 'error is : ' . mysqli_error($link);
+        exit;
+    }
 
 
 ?>
 
-
 <html dir = "rtl">
 <head>
-    <title>صفحه ورود کاربران</title>
+    <meta charset="UTF-8">
+    <style>
+        .button {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            text-align: justify-all;
+
+                }
+        .button1 {
+            float: left;
+        }
+        .button2 {
+            background-color: dodgerblue;
+            padding: 3px 8px;
+
+        }
+        .button3 {
+            background-color: red;
+            padding: 3px 15px;
+
+        }
+    </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
 </head>
 <body>
-    <h3>صفحه ورود کاربران</h3>
-    <form action="/projects/" method="post">
-        <label > نام :</label>
-        <input type="text" name="name"><br><br>
-        <label > نام خانوادگی :</label>
-        <input type="text" name="family"><br><br>
-        <label > ایمیل :</label>
-        <input type="email" name="email"><br><br>
-        <label > سن : </label>
-        <input type="number" name="age"><br><br>
-        <button>submit</button>
 
-    </form>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-10">
+
+                <div class="page-header">
+                <h2>لیست کاربران</h2>
+        <button class="button button1" onclick="document . location = '/projects/user-page.php'">افزودن کاربر جدید</button>
+                </div>
+
+
+        <table class="table">
+        <thead>
+
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">نام</th>
+                <th scope="col">نام خانوادگی</th>
+                <th scope="col">ایمیل</th>
+                <th scope="col">اقدامات</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <?php while ( $user = mysqli_fetch_assoc($result)) { ?>
+            <tr>
+<!--                <td>--><?//= $user['age'] ?><!--</td>-->
+                <th scope="row"><?= $user['age']?></th>
+                <td><?= $user['name'] ?></td>
+                <td><?= $user['family'] ?></td>
+                <td><?= $user['email'] ?></td>
+                <td>
+                    <button class="button button2" onclick="document.location = '/projects/edit.php?id=<?= $user['id']?>'">ویرایش  </button>
+                </td>
+                <td>
+                    <button class="button button3" onclick="document.location = '/projects/delete.php/?id=<?= $user['id']?>'"> حذف </button>
+                </td>
+
+
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+            </div>
+        </div>
+    </div>
+
 </body>
+
 </html>
