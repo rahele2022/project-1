@@ -1,31 +1,71 @@
 <?php
 
-//function request($field){
+function request($field){
+
+    return isset($_REQUEST['field']) && $_REQUEST['field'] != "" ? $_REQUEST['field'] : null;
+}
+
+//if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //
-//    return isset($_REQUEST['field']) && $_REQUEST['field'] != "" ? $_REQUEST['field'] : null;
-//}
+//    $name = isset($_POST['name']) ? $_POST['name'] : null;
+//    $family = isset($_POST['family']) ? $_POST['family'] : null;
+//    $email = isset($_POST['email']) ? $_POST['email'] : null ;
+//    $age = isset($_POST['age']) ? $_POST['age'] :null ;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+function has_error($field){
 
-    $name = isset($_POST['name']) ? $_POST['name'] : null;
-    $family = isset($_POST['family']) ? $_POST['family'] : null;
-    $email = isset($_POST['email']) ? $_POST['email'] : null ;
-    $age = isset($_POST['age']) ? $_POST['age'] :null ;
+    global $errors;
+    return isset($errors['field']);
+}
+function get_error($field){
 
-//    $name = request('name');
-//    $family = request('family');
-//    $email = request('email');
-//    $age = request('age');
+    global $errors;
+    return has_error($field) ? $errors['field'] : null;
+}
 
+$errors =[];
 
+if ($_SERVER['REQUEST_METHOD'] = 'POST'){
+
+    $name = request('name');
+    $family = request('family');
+    $email = request('email');
+    $age = request('age');
+
+    if (is_null($name)){
+
+        $errors['name'] = 'فیلد نام نمی تواند خالی باشد';
+    }
+    if (is_null('$family')){
+
+        $errors['family'] = 'فیلد نام خانوادگی نمی تواند خالی باشد';
+    }
+    if (is_null($email)){
+
+        $errors['email'] = 'فیلد ایمیل نمی تواند خالی باشد';
+    }
+    if (is_null($age)){
+
+        $errors['age'] = 'فیلد سن نمی تواند خالی باشد';
+    }
     if (! is_null($name) && ! is_null($family) && ! is_null($email) && ! is_null($age)) {
 
-        $link = mysqli_connect('localhost:3306', 'root', '');
-        if (!$link) {
-
-            echo 'could not connect :' . mysqli_connect_error();
-            exit;
+            echo 'حساب کاربری با موفقیت ایجاد شد';
         }
+
+
+$link = mysqli_connect('localhost:3306', 'root', '');
+if (!$link) {
+
+    echo 'could not connect :' . mysqli_connect_error();
+    exit;
+
+
+
+
+
+
+
 
 
 //$SQL ='CREATE DATABASE customers';
@@ -57,9 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($result = mysqli_stmt_execute($statement)) {
 
-//            echo 'insert query run successfully';
+            echo 'insert query run successfully';
         } else {
             echo 'error : ' . mysqli_error($link);
+        }
+
+        if (mysqli_affected_rows($link)){
+
+            header("location: /projects ");
+            return;
         }
 
 
@@ -79,20 +125,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html dir = "rtl">
 <head>
     <title>صفحه ورود کاربران</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 </head>
 <body>
-    <h3>صفحه ورود کاربران</h3>
-    <form action="/projects/" method="post">
-        <label > نام :</label>
-        <input type="text" name="name"><br><br>
-        <label > نام خانوادگی :</label>
-        <input type="text" name="family"><br><br>
-        <label > ایمیل :</label>
-        <input type="email" name="email"><br><br>
-        <label > سن : </label>
-        <input type="number" name="age"><br><br>
-        <button>submit</button>
+    <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-20">
+        <div class="page-header">
+            <h5 class="col-md text-right">صفحه ورود کاربران</h5>
+        </div>
+
+    <form  action="/projects/" method="post">
+        <div class="form-group">
+                <label class="col-md text-right">  نام </label>
+                <input type="text" name="name" class="form-control">
+            <?php if (has_error('name')){?>
+                <span><?= get_error('name'); ?></span><br>
+            <?php } ?>
+        </div>
+        <div class="form-group">
+                <label class="col-md text-right" > نام خانوادگی </label>
+                <input type="text" name="family" class="form-control">
+        </div>
+        <div class="form-group">
+                <label class="col-md text-right" > ایمیل </label>
+                <input type="email" name="email" class="form-control">
+        </div>
+        <div class="form-group">
+                <label class="col-md text-right"> سن  </label>
+                <input type="number" name="age" class="form-control"><br>
+        <button type="button" class="btn btn-primary">ثبت نام</button>
+        </div>
 
     </form>
+                </div>
+            </div>
+    </div>
 </body>
 </html>
