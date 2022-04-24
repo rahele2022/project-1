@@ -1,113 +1,98 @@
 <?php
 
+
 function request($field){
 
     return isset($_REQUEST['field']) && $_REQUEST['field'] != "" ? $_REQUEST['field'] : null;
 }
 
-//if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+//function has_error($field){
 //
+//    global $errors;
+//    return isset($errors['field']);
+//
+//}
+//function get_error($field){
+//
+//    global $errors;
+//    return has_error($field) ? $errors['field'] : null;
+//}
+//
+//$errors =[];
+
+if ($_SERVER['REQUEST_METHOD'] = 'POST') {
+
 //    $name = isset($_POST['name']) ? $_POST['name'] : null;
 //    $family = isset($_POST['family']) ? $_POST['family'] : null;
-//    $email = isset($_POST['email']) ? $_POST['email'] : null ;
-//    $age = isset($_POST['age']) ? $_POST['age'] :null ;
+//    $email = isset($_POST['email']) ? $_POST['email'] : null;
+//    $age = isset($_POST['age']) ? $_POST['age'] : null;
 
-function has_error($field){
-
-    global $errors;
-    return isset($errors['field']);
-}
-function get_error($field){
-
-    global $errors;
-    return has_error($field) ? $errors['field'] : null;
-}
-
-$errors =[];
-
-if ($_SERVER['REQUEST_METHOD'] = 'POST'){
 
     $name = request('name');
     $family = request('family');
     $email = request('email');
     $age = request('age');
 
-    if (is_null($name)){
 
-        $errors['name'] = 'فیلد نام نمی تواند خالی باشد';
-    }
-    if (is_null('$family')){
+//    if (is_null($name)) {
+//
+//       $errors['name'] = 'فیلد نام نمی تواند خالی باشد';
+//    }
+//    if (is_null('$family')) {
+//
+//        echo $errors['family'] = 'فیلد نام خانوادگی نمی تواند خالی باشد';
+//    }
+//    if (is_null($email)) {
+//
+//        $errors['email'] = 'فیلد ایمیل نمی تواند خالی باشد';
+//    }
+//    if (is_null($age)) {
+//
+//        $errors['age'] = 'فیلد سن نمی تواند خالی باشد';
+//    }
+    if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) {
 
-        $errors['family'] = 'فیلد نام خانوادگی نمی تواند خالی باشد';
-    }
-    if (is_null($email)){
+        echo 'حساب کاربری با موفقیت ایجاد شد';
 
-        $errors['email'] = 'فیلد ایمیل نمی تواند خالی باشد';
-    }
-    if (is_null($age)){
 
-        $errors['age'] = 'فیلد سن نمی تواند خالی باشد';
-    }
-    if (! is_null($name) && ! is_null($family) && ! is_null($email) && ! is_null($age)) {
+//        include './database.php';
 
-            echo 'حساب کاربری با موفقیت ایجاد شد';
+
+        $link = mysqli_connect('localhost:3306' , 'root' , '');
+
+        if (! $link){
+
+            echo 'could not connected : ' . mysqli_connect_errno();
+            exit;
         }
 
-
-$link = mysqli_connect('localhost:3306', 'root', '');
-if (!$link) {
-
-    echo 'could not connect :' . mysqli_connect_error();
-    exit;
+        mysqli_select_db($link , 'customers');
 
 
+        $statement =prepare($link , "INSERT INTO users (name , family , email , age) VALUES (? ,? , ? , ? )");
 
+        $statement->bind_param($link ,'sssi' , $_POST['name'] , $_POST['family'] , $_POST['email'] , $_POST['age']);
 
+        if ($result = $statement->execute()) {
 
-
-
-
-
-//$SQL ='CREATE DATABASE customers';
-//
-//if ($result = mysqli_query($link , $SQL)){
-//
-//    echo 'database query run successfully';
-//}else{
-//
-//    echo 'error : ' . mysqli_error($link);
-//}
-
-
-        mysqli_select_db($link, 'customers');
-
-
-//$SQL ='create table users(id INT AUTO_INCREMENT , name VARCHAR(100) NOT NULL , family VARCHAR(100) NOT NULL ,email varchar(100) NOT NULL , age varchar(100) NOT NULL ,primary key (id))';
-//
-//if ($result1= mysqli_query($link , $SQL)){
-//
-//    echo 'table query run successfully';
-//}else{
-//    echo 'error : ' . mysqli_error($link);
-//}
-
-        $statement = mysqli_prepare($link , "insert into users( name , family , email , age ) values (? ,? , ? , ?)");
-
-        mysqli_stmt_bind_param($statement , 'sssi' , $name , $family ,$email , $age);
-
-        if ($result = mysqli_stmt_execute($statement)) {
+//            var_dump($statement->affected_rows());
 
             echo 'insert query run successfully';
         } else {
-            echo 'error : ' . mysqli_error($link);
+            echo 'error : ' . mysqli_error();
         }
 
-        if (mysqli_affected_rows($link)){
+//        $result = $statement->get_result();
 
-            header("location: /projects ");
+
+        if ($statement->affected_rows()){
+
+            header("location: /projects/ ");
             return;
         }
 
+        $statement->close();
+//        $conn->close();
 
     }
 }
@@ -136,13 +121,13 @@ if (!$link) {
             <h5 class="col-md text-right">صفحه ورود کاربران</h5>
         </div>
 
-    <form  action="/projects/" method="post">
+    <form  action="/projects/user-page.php" method="post">
         <div class="form-group">
                 <label class="col-md text-right">  نام </label>
                 <input type="text" name="name" class="form-control">
-            <?php if (has_error('name')){?>
-                <span><?= get_error('name'); ?></span><br>
-            <?php } ?>
+<!--            --><?php //if (has_error('name')){?>
+<!--                <span>--><?//= get_error('name'); ?><!--</span><br>-->
+<!--            --><?php //} ?>
         </div>
         <div class="form-group">
                 <label class="col-md text-right" > نام خانوادگی </label>
