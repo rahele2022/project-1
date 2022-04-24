@@ -1,47 +1,42 @@
 <?php
 
 
-if (! isset($_GET['id'])) {
+if (!isset($_GET['id'])) {
 
     header("location: /projects");
     return;
 }
 
-$link = mysqli_connect('localhost:3306' , 'root' , '');
+include './database.php';
 
-if (! $link){
 
-    echo 'could not connected : ' . mysqli_connect_errno();
-    exit;
-}
-
-mysqli_select_db($link , 'customers');
-
-$stmt = mysqli_prepare($link , "select * from users where id = ?");
+$stmt = $conn->prepare("select * from users where id = ?");
 
 $id = (int) $_GET['id'];
-mysqli_stmt_bind_param($stmt , 'i' , $id);
+ $stmt->bind_param('i' , $id);
 
-mysqli_stmt_execute($stmt);
+ $stmt->execute();
 
-$result = mysqli_stmt_get_result($stmt);
+$result = $stmt->get_result();
 
-// var_dump($result);
 
 if ($result -> num_rows == 0){
 
     header("location: /projects/");
     return;
 }
-$user = mysqli_fetch_assoc($result);
+$user = $result->fetch_assoc();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! is_null($user)){
+if ( isset($_POST['update_button'])  && ! is_null($user)){
 
-    $stmt = mysqli_prepare($link , "update users set name = ? , family = ? , email = ? , age = ? where id = ?");
-    mysqli_stmt_bind_param($stmt , 'sssii' , $_POST['name'] , $_POST['family'] , $_POST['email'] , $_POST['age'] , $user['id']);
-    mysqli_stmt_execute($stmt);
+    $stmt=$conn->prepare("update users set name = ? , family = ? , email = ? , age = ? where id = ?");
 
-    if (mysqli_affected_rows($link)){
+    $id = (int) $_GET['id'];
+
+    $stmt->bind_param('sssii' , $_REQUEST['name'] , $_REQUEST['family'] , $_REQUEST['email'] , $_REQUEST['age'] , $user['id']);
+    $stmt->execute();
+
+    if ($conn->affected_rows == true){
 
         header("location: /projects");
         return;
@@ -55,20 +50,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! is_null($user)){
 <html dir = "rtl">
 <head>
     <title>ویرایش اطلاعات کاربران</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 </head>
 <body>
-<h3>ویرایش اطلاعات</h3>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-20">
+            <div class="page-header">
+                <h5> ویرایش اطلاعات کاربران</h5>
+            </div>
+
 <form action="/projects/edit.php?id=<?= $user['id'] ?>" method="post">
-    <label > نام :</label>
-    <input type="text" name="name" value="<?= $user['name'] ?>"><br><br>
-    <label > نام خانوادگی :</label>
-    <input type="text" name="family" value="<?= $user['family'] ?>"><br><br>
-    <label > ایمیل :</label>
-    <input type="email" name="email" value="<?= $user['email'] ?>"><br><br>
-    <label > سن : </label>
-    <input type="number" name="age" value="<?= $user['age'] ?>"><br><br>
-    <button>ثبت ویرایش</button>
+
+    <div class="form-group">
+        <label class="col-md text-right" > نام </label>
+        <input type="text" name="name" class="form-control" value="<?= $user['name'] ?>"><br>
+    </div>
+    <div class="form-group">
+        <label class="col-md text-right"> نام خانوادگی </label>
+        <input type="text" name="family" class="form-control" value="<?= $user['family'] ?>"><br>
+    </div>
+    <div class="form-group">
+        <label class="col-md text-right"> ایمیل </label>
+        <input type="email" name="email" class="form-control" value="<?= $user['email'] ?>"><br>
+    </div>
+    <div class="form-group">
+        <label class="col-md text-right" > سن  </label>
+        <input type="number" name="age" class="form-control"  value="<?= $user['age'] ?>"><br>
+    </div>
+    <button type="submit" name="update_button" class="btn btn-primary">ثبت ویرایش</button>
 
 </form>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

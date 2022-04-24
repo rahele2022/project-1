@@ -1,106 +1,37 @@
 <?php
 
 
-function request($field){
+include_once './database.php';
 
-    return isset($_REQUEST['field']) && $_REQUEST['field'] != "" ? $_REQUEST['field'] : null;
-}
+if (isset($_POST['insert_button'])){
 
-//function has_error($field){
-//
-//    global $errors;
-//    return isset($errors['field']);
-//
-//}
-//function get_error($field){
-//
-//    global $errors;
-//    return has_error($field) ? $errors['field'] : null;
-//}
-//
-//$errors =[];
-
-if ($_SERVER['REQUEST_METHOD'] = 'POST') {
-
-//    $name = isset($_POST['name']) ? $_POST['name'] : null;
-//    $family = isset($_POST['family']) ? $_POST['family'] : null;
-//    $email = isset($_POST['email']) ? $_POST['email'] : null;
-//    $age = isset($_POST['age']) ? $_POST['age'] : null;
+    $name = $_POST['name'];
+    $family = $_POST['family'];
+    $email = $_POST['email'];
+    $age = $_POST['age'];
 
 
-    $name = request('name');
-    $family = request('family');
-    $email = request('email');
-    $age = request('age');
+if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) {
 
 
-//    if (is_null($name)) {
-//
-//       $errors['name'] = 'فیلد نام نمی تواند خالی باشد';
-//    }
-//    if (is_null('$family')) {
-//
-//        echo $errors['family'] = 'فیلد نام خانوادگی نمی تواند خالی باشد';
-//    }
-//    if (is_null($email)) {
-//
-//        $errors['email'] = 'فیلد ایمیل نمی تواند خالی باشد';
-//    }
-//    if (is_null($age)) {
-//
-//        $errors['age'] = 'فیلد سن نمی تواند خالی باشد';
-//    }
-    if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) {
+    $stmt = $conn->prepare("INSERT INTO users(name, family, email,age) VALUES (?,?,?,?)");
 
-        echo 'حساب کاربری با موفقیت ایجاد شد';
+    $id = (int) $_GET['id'];
 
+    $stmt->bind_param('sssi', $name, $family, $email, $age);
 
-//        include './database.php';
+    $stmt->execute();
 
+    if ($conn->affected_rows == true){
 
-        $link = mysqli_connect('localhost:3306' , 'root' , '');
-
-        if (! $link){
-
-            echo 'could not connected : ' . mysqli_connect_errno();
-            exit;
-        }
-
-        mysqli_select_db($link , 'customers');
-
-
-        $statement =prepare($link , "INSERT INTO users (name , family , email , age) VALUES (? ,? , ? , ? )");
-
-        $statement->bind_param($link ,'sssi' , $_POST['name'] , $_POST['family'] , $_POST['email'] , $_POST['age']);
-
-        if ($result = $statement->execute()) {
-
-//            var_dump($statement->affected_rows());
-
-            echo 'insert query run successfully';
-        } else {
-            echo 'error : ' . mysqli_error();
-        }
-
-//        $result = $statement->get_result();
-
-
-        if ($statement->affected_rows()){
-
-            header("location: /projects/ ");
-            return;
-        }
-
-        $statement->close();
-//        $conn->close();
-
+        header("location: /projects");
+        return;
     }
+
+    $stmt->close();
+    $conn->close();
 }
-
-
-
-
-
+}
 
 
 
@@ -114,6 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] = 'POST') {
 
 </head>
 <body>
+
+
+
     <div class="container mt-3">
             <div class="row">
                 <div class="col-md-20">
@@ -121,31 +55,43 @@ if ($_SERVER['REQUEST_METHOD'] = 'POST') {
             <h5 class="col-md text-right">صفحه ورود کاربران</h5>
         </div>
 
-    <form  action="/projects/user-page.php" method="post">
+
+<!--    <form  action="--><?php //echo htmlspecialchars($_SERVER["PHP_SELF"]);?><!--" >-->
+        <form  action="/projects/user-page.php" method="post" >
         <div class="form-group">
                 <label class="col-md text-right">  نام </label>
                 <input type="text" name="name" class="form-control">
-<!--            --><?php //if (has_error('name')){?>
-<!--                <span>--><?//= get_error('name'); ?><!--</span><br>-->
-<!--            --><?php //} ?>
+<!--                    <span class="error">*--><?php //echo $nameErr; ?><!--</span>-->
+                    <br>
+
         </div>
         <div class="form-group">
                 <label class="col-md text-right" > نام خانوادگی </label>
                 <input type="text" name="family" class="form-control">
+<!--                    <span class="error">*--><?php //echo $familyErr; ?><!--</span>-->
+                    <br>
+
         </div>
         <div class="form-group">
                 <label class="col-md text-right" > ایمیل </label>
                 <input type="email" name="email" class="form-control">
+<!--                    <span class="error">--><?php //echo $emailErr; ?><!--</span>-->
+                    <br>
+
         </div>
         <div class="form-group">
                 <label class="col-md text-right"> سن  </label>
                 <input type="number" name="age" class="form-control"><br>
-        <button type="button" class="btn btn-primary">ثبت نام</button>
+<!--                    <span class="error">--><?php //echo $ageErr; ?><!--</span>-->
+                    <br>
+
+        <button type="submit" name="insert_button" class="btn btn-primary">ثبت نام</button>
         </div>
 
     </form>
                 </div>
             </div>
     </div>
+
 </body>
 </html>

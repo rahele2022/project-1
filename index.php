@@ -1,17 +1,10 @@
 <?php
 
-$link = mysqli_connect('localhost:3306' , 'root' , '');
-
-    if (! $link){
-
-    echo 'could not connect : ' . mysqli_connect_error();
-    exit;
-}
-    mysqli_select_db($link , 'customers');
+include_once './database.php';
 
     $SQL = " select * from users ORDER BY id";
 
-    if ($result = mysqli_query($link , $SQL)){
+    if ($result = mysqli_query($conn ,$SQL)){
 
 //       while ( $user = mysqli_fetch_assoc($result)) {
 //
@@ -20,7 +13,7 @@ $link = mysqli_connect('localhost:3306' , 'root' , '');
 
     }else{
 
-        echo 'error is : ' . mysqli_error($link);
+        echo 'error is : ' . mysqli_error();
         exit;
     }
 
@@ -84,7 +77,7 @@ $link = mysqli_connect('localhost:3306' , 'root' , '');
 
         </thead>
         <tbody>
-            <?php while ( $user = mysqli_fetch_assoc($result)) { ?>
+            <?php while ( $user = $result->fetch_assoc()) { ?>
             <tr>
 <!--                <td>--><?//= $user['age'] ?><!--</td>-->
                 <th scope="row"><?= $user['age']?></th>

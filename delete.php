@@ -6,23 +6,16 @@ if ( ! isset($_GET['id'])){
     return;
 }
 
-$link =mysqli_connect('localhost:3306' , 'root' , '');
+include './database.php';
 
-if (! $link){
-
-    echo 'could not connected : ' . mysqli_connect_error();
-}
-
-mysqli_select_db($link , 'customers');
-
-$stmt = mysqli_prepare($link , "delete from users where id=?");
+$stmt = $conn -> prepare("delete from users where id=?");
 
 $id = (int) $_GET['id'];
 
-mysqli_stmt_bind_param($stmt , 'i' , $id);
-mysqli_stmt_execute($stmt);
+$stmt -> bind_param('i' , $id);
+$stmt -> execute();
 
-if (mysqli_affected_rows($link)){
+if ($conn -> affected_rows == true){
 
     header("location: /projects");
     return;
