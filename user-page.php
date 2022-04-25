@@ -1,5 +1,9 @@
 <?php
 
+//if ($_SERVER['REQUEST_METHOD'] == 'GET'){
+//    var_dump($_SERVER['REQUEST_METHOD']);
+//}
+//var_dump($_SERVER['REQUEST_METHOD']);
 
 include_once './database.php';
 
@@ -47,7 +51,6 @@ if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) 
 <body>
 
 
-
     <div class="container mt-3">
             <div class="row">
                 <div class="col-md-20">
@@ -56,12 +59,22 @@ if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) 
         </div>
 
 
-<!--    <form  action="--><?php //echo htmlspecialchars($_SERVER["PHP_SELF"]);?><!--" >-->
-        <form  action="/projects/user-page.php" method="post" >
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+<!--        <form action="/projects/user-page.php" method="post" >-->
         <div class="form-group">
                 <label class="col-md text-right">  نام </label>
                 <input type="text" name="name" class="form-control">
 <!--                    <span class="error">*--><?php //echo $nameErr; ?><!--</span>-->
+            <?php
+            if ( !empty($_REQUEST['name'])){
+                $name = $_REQUEST['name'];
+            }else{
+                $name = null ;
+                echo '<p class="error" style="color: red;">فیلد نام نمی تواند خالی باشد</p>';
+            }
+
+            ?>
+
                     <br>
 
         </div>
@@ -92,6 +105,7 @@ if (!is_null($name) && !is_null($family) && !is_null($email) && !is_null($age)) 
                 </div>
             </div>
     </div>
+
 
 </body>
 </html>
