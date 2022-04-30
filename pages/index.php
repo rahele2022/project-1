@@ -1,5 +1,7 @@
 <?php
 
+
+
 include_once './database.php';
 
     $SQL = " select * from users ORDER BY id";
@@ -18,12 +20,17 @@ include_once './database.php';
     }
 
 
+
 ?>
 
 <html dir = "rtl">
 <head>
     <meta charset="UTF-8">
     <style>
+        .error{
+            color: red;
+            text-align: center;
+        }
         .button {
             background-color: green;
             border: none;
@@ -57,9 +64,14 @@ include_once './database.php';
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-10">
-
+                <h6 class="error"><?php session_start();
+                    if (isset($_SESSION['msg'])){
+                        echo $_SESSION['msg'];
+                        unset($_SESSION['msg']);
+                    } ?></h6>
                 <div class="page-header">
                 <h2>لیست کاربران</h2>
+
         <button class="button button1" onclick="document . location = '/projects/user-page.php'">افزودن کاربر جدید</button>
                 </div>
 

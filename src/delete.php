@@ -17,6 +17,13 @@ $stmt -> execute();
 
 if ($conn -> affected_rows == true){
 
-    header("location: /projects");
+//    echo "<script>
+//             window.location.href = '/projects';
+//             alert('*اطلاعات کاربر با موفقیت حذف شد*');
+//               </script>";
+    session_start();
+    $_SESSION['msg'] = '*اطلاعات کاربر با موفقیت حذف شد*';
+    header('location: /projects');
+
     return;
 }
