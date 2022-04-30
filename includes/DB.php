@@ -2,50 +2,40 @@
 
 class DB
 {
-    protected $host;
-    protected $user;
-    protected $pass;
-    protected $dbname;
-    protected $conn;
-    protected $stmt;
+    protected $link;
+    private $dsn , $server , $dbName , $dbUser , $dbPass;
 
-    public function __construct($host , $user , $pass , $dbname)
+    public function __construct($server , $db ,$user , $pass  )
     {
-        $this->host = $host;
-        $this->user = $user;
-        $this->pass = $pass;
-        $this->dbname = $dbname;
+        $this->dsn = 'mysql:host=' . $server . ';db=' . $db;
+        $this->server = $server;
+        $this->dbName = $db;
+        $this->dbUser = $user;
+        $this->dbPass = $pass;
+        $this->connect();
+
     }
 
-    public function connect(){
-
-       $conn = new mysqli($this->host , $this->user ,$this->pass , $this->dbname);
-
-        if ($conn->connect_error){
-
-            die("Connection Failed : " . $conn->connect_error);
+    public function connect()
+    {
+        try {
+            $this->link = new PDO($this->dsn , $this->dbUser , $this->dbPass);
+            $this->link->setAttribute(PDO::ATTR_ERRMODE , PDO::ERRMODE_EXCEPTION);
+        }catch (PDOException $e){
+            echo 'Connection Failed :' . $e->getMessage();
         }
 
+
     }
 
-    public function insert($name , $family , $email , $age){
-
-        $conn = new mysqli($this->host , $this->user ,$this->pass , $this->dbname);
-
-        $stmt = $conn->prepare("INSERT INTO users(name, family, email,age) VALUES (?,?,?,?)");
-
-        $stmt->bind_param('sssi', $name, $family, $email, $age);
-
-        $stmt->execute();
-
-
+    public function insert(){
 
     }
     public function select(){
 
     }
     public function delete(){
-        
+
     }
 }
 
